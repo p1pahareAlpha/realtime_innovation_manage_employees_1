@@ -35,11 +35,35 @@ class SampleItemListView extends StatelessWidget {
                     );
                   }
                   if (state is EmployeeStateEmpty) {
-                    return Center(
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        child: Image.asset('assets/images/empty_image.png'),
+                    return Scaffold(
+                      floatingActionButton: (state is! EmployeeStateLoading)
+                          ? FloatingActionButton(
+                              backgroundColor: Colors.blueAccent,
+                              onPressed: () async {
+                                final bool? isUpdated =
+                                    await Navigator.pushNamed(
+                                  context,
+                                  AddEmployeeView.routeName,
+                                );
+                                if (context.mounted && isUpdated == true) {
+                                  context
+                                      .read<EmployeeListingCubit>()
+                                      .loadEmployees();
+                                }
+                              },
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                      backgroundColor: const Color(0xfff2f2f2),
+                      body: Center(
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: Image.asset('assets/images/empty_image.png'),
+                        ),
                       ),
                     );
                   }
