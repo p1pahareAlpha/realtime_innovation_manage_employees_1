@@ -9,10 +9,23 @@ import 'package:realtime_innovation_manage_employees/src/models/employee.dart';
 class FormWidget extends StatelessWidget {
   FormWidget({
     super.key,
+    this.employee,
     required this.formState,
     required this.onSubmitted,
-  });
+  }) {
+    nameField.text = employee?.name ?? "";
+    roleField.text = employee?.role ?? "";
+    dateList['date1'] = employee?.fromDate;
+    dateList['date2'] = employee?.toDate;
+    if (dateList['date1'] != null) {
+      fromDate.text = formatter.format(dateList['date1'] as DateTime);
+    }
+    if (dateList['date2'] != null) {
+      toDate.text = formatter.format(dateList['date2'] as DateTime);
+    }
+  }
   final AddEmployeeStateInitial formState;
+  final Employee? employee;
   final Function(Employee emp) onSubmitted;
   final nameField = TextEditingController();
   final roleField = TextEditingController();
@@ -192,8 +205,8 @@ class FormWidget extends StatelessWidget {
                             id: 23 + Random().nextInt(1000),
                             name: nameField.text,
                             role: roleField.text,
-                            fromDate: DateTime(2024, 10, 20),
-                            toDate: DateTime(2024, 11, 20),
+                            fromDate: dateList['date1'] as DateTime,
+                            toDate: dateList['date2'] as DateTime,
                           ));
                         }
                       },

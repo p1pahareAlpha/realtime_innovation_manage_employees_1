@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:realtime_innovation_manage_employees/src/models/employee.dart';
 import 'package:realtime_innovation_manage_employees/src/repository/employee_repository.dart';
 
 import 'adding_an_employee/add_employee_view.dart';
@@ -45,7 +46,9 @@ class MyApp extends StatelessWidget {
             builder: (BuildContext context) {
               switch (routeSettings.name) {
                 case AddEmployeeView.routeName:
-                  return const AddEmployeeView();
+                  return AddEmployeeView(
+                    employee: routeSettings.arguments as Employee?,
+                  );
                 case SampleItemListView.routeName:
                 default:
                   return const SampleItemListView();

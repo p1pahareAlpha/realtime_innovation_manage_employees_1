@@ -25,23 +25,6 @@ class SampleItemListView extends StatelessWidget {
             appBar: AppBar(
               title: const Text('Employee List'),
             ),
-            floatingActionButton: FloatingActionButton(
-              backgroundColor: Colors.blueAccent,
-              onPressed: () async {
-                final bool? isUpdated = await Navigator.pushNamed(
-                  context,
-                  AddEmployeeView.routeName,
-                );
-                if (context.mounted && isUpdated == true) {
-                  context.read<EmployeeListingCubit>().loadEmployees();
-                }
-              },
-              child: const Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-            ),
-            backgroundColor: const Color(0xfff2f2f2),
             body: BlocBuilder<EmployeeListingCubit, EmployeeListingState>(
                 bloc: context.read<EmployeeListingCubit>(),
                 builder: (context, state) {
@@ -61,81 +44,104 @@ class SampleItemListView extends StatelessWidget {
                     );
                   }
                   if (state is EmployeeListingLoaded) {
-                    return SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (state.currentEmployees.isNotEmpty)
-                            Container(
-                              color: const Color(0xfff2f2f2),
-                              padding: const EdgeInsets.all(
-                                12,
-                              ),
-                              width: double.infinity,
-                              child: const Text(
-                                "Current Employees",
-                                style: TextStyle(
-                                  color: Colors.lightBlue,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                    return Scaffold(
+                        floatingActionButton: (state is! EmployeeStateLoading)
+                            ? FloatingActionButton(
+                                backgroundColor: Colors.blueAccent,
+                                onPressed: () async {
+                                  final bool? isUpdated =
+                                      await Navigator.pushNamed(
+                                    context,
+                                    AddEmployeeView.routeName,
+                                  );
+                                  if (context.mounted && isUpdated == true) {
+                                    context
+                                        .read<EmployeeListingCubit>()
+                                        .loadEmployees();
+                                  }
+                                },
+                                child: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
                                 ),
-                              ),
-                            ),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: state.currentEmployees.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final item = state.currentEmployees[index];
-                              return EmployeeTile(
-                                item: item,
-                              );
-                            },
-                          ),
-                          if (state.exEmployees.isNotEmpty)
-                            Container(
-                              color: const Color(0xfff2f2f2),
-                              padding: const EdgeInsets.all(
-                                12,
-                              ),
-                              width: double.infinity,
-                              child: const Text(
-                                "Previous Employees",
-                                style: TextStyle(
-                                  color: Colors.lightBlue,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                              )
+                            : const SizedBox.shrink(),
+                        backgroundColor: const Color(0xfff2f2f2),
+                        body: SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (state.currentEmployees.isNotEmpty)
+                                Container(
+                                  color: const Color(0xfff2f2f2),
+                                  padding: const EdgeInsets.all(
+                                    12,
+                                  ),
+                                  width: double.infinity,
+                                  child: const Text(
+                                    "Current Employees",
+                                    style: TextStyle(
+                                      color: Colors.lightBlue,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: state.currentEmployees.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final item = state.currentEmployees[index];
+                                  return EmployeeTile(
+                                    item: item,
+                                  );
+                                },
                               ),
-                            ),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: state.exEmployees.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final item = state.currentEmployees[index];
-                              return EmployeeTile(
-                                item: item,
-                              );
-                            },
-                          ),
-                          Container(
-                            color: const Color(0xfff2f2f2),
-                            padding: const EdgeInsets.all(
-                              12,
-                            ),
-                            width: double.infinity,
-                            child: const Text(
-                              "Swipe left to delete",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
+                              if (state.exEmployees.isNotEmpty)
+                                Container(
+                                  color: const Color(0xfff2f2f2),
+                                  padding: const EdgeInsets.all(
+                                    12,
+                                  ),
+                                  width: double.infinity,
+                                  child: const Text(
+                                    "Previous Employees",
+                                    style: TextStyle(
+                                      color: Colors.lightBlue,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: state.exEmployees.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final item = state.exEmployees[index];
+                                  return EmployeeTile(
+                                    item: item,
+                                  );
+                                },
                               ),
-                            ),
+                              Container(
+                                color: const Color(0xfff2f2f2),
+                                padding: const EdgeInsets.all(
+                                  12,
+                                ),
+                                width: double.infinity,
+                                child: const Text(
+                                  "Swipe left to delete",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
-                        ],
-                      ),
-                    );
+                        ));
                   }
                   return const Center(
                     child: CupertinoActivityIndicator(),

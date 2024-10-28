@@ -17,6 +17,9 @@ class EmployeeTile extends StatelessWidget {
   Widget build(BuildContext context) {
     String fromDate = DateFormat('dd MMM, yyyy').format(item.fromDate);
     String toDate = DateFormat('dd MMM, yyyy').format(item.toDate);
+    final nowDate = DateTime.now();
+    final todayEod =
+        DateTime(nowDate.year, nowDate.month, nowDate.day, 23, 59, 59, 0, 0);
     return Dismissible(
       direction: DismissDirection.endToStart,
       key: Key(item.toString()),
@@ -65,8 +68,7 @@ class EmployeeTile extends StatelessWidget {
                       height: 8,
                     ),
                     Text(
-                      (item.toDate.isAfter(
-                              DateTime.now().add(const Duration(days: 1))))
+                      (item.toDate.isAfter(todayEod))
                           ? "From $fromDate"
                           : "$fromDate - $toDate",
                       style: const TextStyle(color: Colors.grey),
@@ -75,9 +77,8 @@ class EmployeeTile extends StatelessWidget {
                 ),
                 onTap: () async {
                   final bool? isUpdated = await Navigator.pushNamed(
-                    context,
-                    AddEmployeeView.routeName,
-                  );
+                      context, AddEmployeeView.routeName,
+                      arguments: item);
                   if (context.mounted && isUpdated == true) {
                     context.read<EmployeeListingCubit>().loadEmployees();
                   }

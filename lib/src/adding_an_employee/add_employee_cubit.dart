@@ -17,4 +17,12 @@ class AddEmployeeCubit extends Cubit<AddEmployeeState> {
     emit(AddEmployeeStateMessage(
         message: "Employee Details were Added Successfully!"));
   }
+
+  void deleteEmployee(Employee e1) async {
+    emit(AddEmployeeStateLoading());
+    await Future.delayed(const Duration(milliseconds: 1500));
+    await employeeRepository.deleteEmployee(e1.id);
+    emit(AddEmployeeStateMessage(
+        message: "Employee details was removed successfully!"));
+  }
 }

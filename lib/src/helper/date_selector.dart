@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,6 +24,7 @@ class _DateSelectorState extends State<DateSelector> {
   final DateFormat formatter = DateFormat('d MMM yyyy');
   bool date1Selected = false;
   bool date2Selected = false;
+  bool showCalendar = true;
 
   @override
   void initState() {
@@ -68,9 +70,15 @@ class _DateSelectorState extends State<DateSelector> {
                                   const EdgeInsets.symmetric(horizontal: 6),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4))),
-                          onPressed: () {
+                          onPressed: () async {
                             setState(() {
                               mode = 1;
+                              showCalendar = false;
+                            });
+                            await Future.delayed(
+                                const Duration(milliseconds: 400));
+                            setState(() {
+                              showCalendar = true;
                             });
                           },
                           child: Text(
@@ -93,9 +101,15 @@ class _DateSelectorState extends State<DateSelector> {
                             padding: const EdgeInsets.symmetric(horizontal: 6),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4))),
-                        onPressed: () {
+                        onPressed: () async {
                           setState(() {
                             mode = 2;
+                            showCalendar = false;
+                          });
+                          await Future.delayed(
+                              const Duration(milliseconds: 400));
+                          setState(() {
+                            showCalendar = true;
                           });
                         },
                         child: Text(
@@ -113,16 +127,18 @@ class _DateSelectorState extends State<DateSelector> {
                 ),
               ),
               const SizedBox(height: 10),
-              CalendarDatePicker(
-                initialDate: mode == 1 ? selectedDate1 : selectedDate2,
-                firstDate: mode == 2 && selectedDate1 != null
-                    ? (selectedDate1 ?? now)
-                    : DateTime(2023),
-                lastDate: mode == 1 && selectedDate2 != null
-                    ? (selectedDate2 ?? now)
-                    : DateTime(2123),
-                onDateChanged: (DateTime date) {
-                  setState(() {
+              if (showCalendar)
+                CalendarDatePicker(
+                  initialDate: mode == 1
+                      ? (selectedDate1 ?? now)
+                      : (selectedDate2 ?? now),
+                  firstDate: mode == 2 && selectedDate1 != null
+                      ? (selectedDate1 ?? now)
+                      : DateTime(2023),
+                  lastDate: mode == 1 && selectedDate2 != null
+                      ? (selectedDate2 ?? now)
+                      : DateTime(2123),
+                  onDateChanged: (DateTime date) async {
                     if (mode == 1) {
                       selectedDate1 = date;
                       date1Selected = true;
@@ -132,9 +148,14 @@ class _DateSelectorState extends State<DateSelector> {
                       date2Selected = true;
                     }
                     setState(() {});
-                  });
-                },
-              ),
+                  },
+                )
+              else
+                const SizedBox(
+                  height: 150,
+                  width: double.infinity,
+                  child: CupertinoActivityIndicator(),
+                ),
               const SizedBox(height: 10),
               Container(
                   width: double.infinity,

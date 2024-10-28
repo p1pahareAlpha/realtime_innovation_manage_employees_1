@@ -16,7 +16,25 @@ class EmployeeListingCubit extends Cubit<EmployeeListingState> {
     if (employeeList.isEmpty) {
       emit(EmployeeStateEmpty());
     } else {
-      emit(EmployeeListingLoaded(currentEmployees: employeeList));
+      final List<Employee> pastEmployees = [];
+      final List<Employee> presentEmployees = [];
+      for (int i = 0; i < employeeList.length; i++) {
+        final nowDate = DateTime.now();
+        final todayEod = DateTime(
+            nowDate.year, nowDate.month, nowDate.day, 23, 59, 59, 0, 0);
+        if (employeeList[i].toDate.isAfter(todayEod)) {
+          presentEmployees.add(employeeList[i]);
+        } else {
+          pastEmployees.add(employeeList[i]);
+        }
+      }
+      employeeList.clear();
+      emit(
+        EmployeeListingLoaded(
+          currentEmployees: presentEmployees,
+          exEmployees: pastEmployees,
+        ),
+      );
     }
   }
 
@@ -41,10 +59,12 @@ class EmployeeListingCubit extends Cubit<EmployeeListingState> {
         }
       }
       employeeList.clear();
-      emit(EmployeeListingLoaded(
-        currentEmployees: presentEmployees,
-        exEmployees: pastEmployees,
-      ));
+      emit(
+        EmployeeListingLoaded(
+          currentEmployees: presentEmployees,
+          exEmployees: pastEmployees,
+        ),
+      );
     }
   }
 }
